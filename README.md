@@ -1,6 +1,6 @@
 # Kanat - a one-tap paper plane flight through stone gates, from day into dusk
 
-[![tests](https://github.com/celaldrg/kanat/actions/workflows/test.yml/badge.svg)](https://github.com/celaldrg/kanat/actions/workflows/test.yml)
+[![tests: node --test](https://img.shields.io/badge/tests-node_----test-blue)](#tests)
 [![License: MIT](https://img.shields.io/badge/license-MIT-a78bfa.svg)](LICENSE)
 
 **▶ Play now: https://celaldrg.github.io/kanat/**
