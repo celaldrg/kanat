@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Kanat · one-tap paper plane game</title>
+  <meta name="description" content="Kanat is a one-tap paper plane game for the browser: thread stone gates while the sky turns from day to dusk. Vanilla JavaScript, open source.">
+  <meta name="theme-color" content="#0f172a">
+  <meta name="color-scheme" content="dark">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Kanat · one-tap paper plane game">
+  <meta property="og:description" content="Tap to fly a paper plane through stone gates while the sky turns from day to dusk. Free, open source, plays in the browser.">
+  <meta property="og:url" content="https://celaldrg.github.io/kanat/">
+  <meta property="og:image" content="https://celaldrg.github.io/kanat/docs/screenshot.png">
+  <meta name="twitter:card" content="summary_large_image">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230f172a'/%3E%3Cpath d='M54 14 10 31l18 6z' fill='%23ffffff'/%3E%3Cpath d='M54 14 28 37l4 15z' fill='%23a78bfa'/%3E%3Cpath d='M28 37l4 15 6-11z' fill='%237c5cd6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script type="module" src="src/main.js"></script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <h1 class="brand">
+        <svg class="brand-mark" viewBox="0 0 64 64" aria-hidden="true" focusable="false">
+          <path d="M54 14 10 31l18 6z" fill="#ffffff"/>
+          <path d="M54 14 28 37l4 15z" fill="#a78bfa"/>
+          <path d="M28 37l4 15 6-11z" fill="#7c5cd6"/>
+        </svg>
+        <span data-i18n="title">Kanat</span>
+      </h1>
+      <nav class="actions">
+        <button id="btn-new" class="btn btn-primary" type="button">
+          <svg class="icon icon-new" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M20 12a8 8 0 1 1-2.34-5.66M20 4v5h-5"/></svg>
+          <span data-i18n="newGame">New game</span>
+        </button>
+        <button id="btn-pause" class="btn btn-icon" type="button" aria-label="Pause" title="Pause" disabled>
+          <svg class="icon icon-pause" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M9 5v14M15 5v14"/></svg>
+          <svg class="icon icon-play" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5l11 7-11 7z"/></svg>
+        </button>
+        <button id="btn-sound" class="btn btn-icon" type="button" aria-label="Mute sound" title="Mute sound">
+          <svg class="icon icon-sound-on" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9h4l5-4v14l-5-4H4zM16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/></svg>
+          <svg class="icon icon-sound-off" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9h4l5-4v14l-5-4H4zM17 9l5 6M22 9l-5 6"/></svg>
+        </button>
+        <button id="btn-lang" class="btn btn-lang" type="button" aria-label="Switch to Turkish" title="Switch to Turkish">TR</button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="arena">
+    <div id="play-area" class="play-area" data-phase="ready">
+      <canvas id="game" role="img" aria-label="Kanat play area: a paper plane flying between stone gates"></canvas>
+
+      <section id="overlay-ready" class="overlay overlay-ready is-visible" aria-hidden="false">
+        <div class="ready-top">
+          <p class="ready-title" data-i18n="title">Kanat</p>
+          <p class="ready-tagline" data-i18n="tagline">Thread the stone gates from day into dusk.</p>
+        </div>
+        <div class="ready-bottom">
+          <p class="ready-cta" data-i18n="tapToFly">Tap or press Space to fly</p>
+          <p class="ready-keys" data-i18n="keysHint">Space, ↑ or W to flap · P or Esc to pause</p>
+          <p class="ready-best"><span data-i18n="best">Best</span> <strong id="ready-best">0</strong></p>
+        </div>
+      </section>
+
+      <section id="overlay-paused" class="overlay overlay-card" aria-hidden="true" inert>
+        <div class="card">
+          <h2 data-i18n="paused">Paused</h2>
+          <button id="btn-resume" class="btn btn-primary btn-wide" type="button" data-i18n="resume">Resume</button>
+          <p class="hint" data-i18n="resumeHint">Tap or press P to continue</p>
+        </div>
+      </section>
+
+      <section id="overlay-over" class="overlay overlay-card" aria-hidden="true" inert>
+        <div class="card">
+          <h2 data-i18n="gameOver">Game over</h2>
+          <div class="medal-row">
+            <div id="medal" class="medal medal--none" aria-hidden="true">
+              <svg viewBox="0 0 64 64" focusable="false"><path d="M54 14 10 31l18 6z"/><path d="M54 14 28 37l4 15z"/></svg>
+            </div>
+            <div class="medal-text">
+              <p id="medal-name" class="medal-name">No medal yet</p>
+              <p id="medal-hint" class="medal-hint">Bronze at 10 points</p>
+            </div>
+          </div>
+          <dl class="stats">
+            <div class="stat"><dt data-i18n="score">Score</dt><dd id="over-score">0</dd></div>
+            <div class="stat"><dt data-i18n="best">Best</dt><dd id="over-best">0</dd></div>
+          </dl>
+          <p id="new-best" class="new-best" data-i18n="newBest" hidden>New best!</p>
+          <button id="btn-again" class="btn btn-primary btn-wide" type="button" data-i18n="playAgain">Play again</button>
+          <p class="hint" data-i18n="restartHint">or press Space</p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <span>MIT</span>
+    <span aria-hidden="true">·</span>
+    <a href="https://github.com/celaldrg/kanat" rel="noopener" data-i18n="source">Source on GitHub</a>
+  </footer>
+
+  <p id="announcer" class="sr-only" aria-live="polite"></p>
+</body>
+</html>

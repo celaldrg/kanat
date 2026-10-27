@@ -1,0 +1,11 @@
+{
+  "name": "kanat",
+  "version": "1.0.0",
+  "description": "Kanat - a one-tap paper-plane flying game for the browser, written in vanilla JavaScript.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}
